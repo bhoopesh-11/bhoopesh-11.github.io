@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conservation Economics Master Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .option-transition { transition: all 0.2s ease; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-900">
+
+<div id="app" class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <header class="mb-8 text-center">
+        <h1 class="text-3xl font-bold text-slate-800 mb-2">Conservation Economics Master Quiz</h1>
+        <p class="text-slate-500">Comprehensive Review: Weeks 1 - 12</p>
+    </header>
+
+    <!-- Main Quiz Interface -->
+    <div id="quiz-container" class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+        <!-- Progress Bar -->
+        <div class="h-2 bg-slate-100 w-full">
+            <div id="progress-bar" class="h-full bg-blue-500 transition-all duration-300" style="width: 0%"></div>
+        </div>
+
+        <div class="p-6 md:p-10">
+            <!-- Question Info -->
+            <div class="flex justify-between items-center mb-6">
+                <span id="week-tag" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold uppercase tracking-wider">Week 1</span>
+                <span id="question-count" class="text-sm font-medium text-slate-400">Question 1 of 120</span>
+            </div>
+
+            <!-- Question Text -->
+            <div id="question-text" class="text-xl md:text-2xl font-semibold text-slate-800 mb-8 leading-relaxed">
+                Loading question...
+            </div>
+
+            <!-- Options -->
+            <div id="options-container" class="space-y-3 mb-8">
+                <!-- Options will be injected here -->
+            </div>
+
+            <!-- Feedback / Controls -->
+            <div id="controls" class="flex flex-col md:flex-row justify-between items-center pt-6 border-t border-slate-100 gap-4">
+                <div id="feedback" class="text-sm font-medium hidden"></div>
+                <div class="flex gap-3 w-full md:w-auto">
+                    <button id="prev-btn" class="flex-1 px-6 py-3 rounded-xl font-semibold text-slate-600 border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed">Previous</button>
+                    <button id="next-btn" class="flex-1 px-6 py-3 rounded-xl font-semibold text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all">Next Question</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Screen (Hidden by default) -->
+    <div id="results-container" class="hidden bg-white rounded-2xl shadow-xl border border-slate-200 p-10 text-center">
+        <div class="mb-6">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 text-green-600 rounded-full mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+            <h2 class="text-3xl font-bold text-slate-800">Quiz Completed!</h2>
+            <p class="text-slate-500 mt-2">Here is how you performed across all 12 weeks.</p>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4 mb-8">
+            <div class="p-6 bg-slate-50 rounded-xl">
+                <div class="text-sm text-slate-500 mb-1">Total Score</div>
+                <div id="final-score" class="text-4xl font-bold text-slate-800">0/120</div>
+            </div>
+            <div class="p-6 bg-slate-50 rounded-xl">
+                <div class="text-sm text-slate-500 mb-1">Percentage</div>
+                <div id="final-percent" class="text-4xl font-bold text-blue-600">0%</div>
+            </div>
+        </div>
+
+        <button onclick="location.reload()" class="w-full md:w-auto px-10 py-4 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-900 transition-colors">Retake Quiz</button>
+    </div>
+
+    <!-- Navigation Shortcuts -->
+    <div class="mt-8 flex flex-wrap justify-center gap-2">
+        <button onclick="jumpToWeek(1)" class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs hover:bg-slate-100">W1</button>
+        <button onclick="jumpToWeek(2)" class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs hover:bg-slate-100">W2</button>
+        <button onclick="jumpToWeek(3)" class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs hover:bg-slate-100">W3</button>
+        <button onclick="jumpToWeek(4)" class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs hover:bg-slate-100">W4</button>
+        <button onclick="jumpToWeek(5)" class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs hover:bg-slate-100">W5</button>
+        <button onclick="jumpToWeek(6)" class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs hover:bg-slate-100">W6</button>
+        <button onclick="jumpToWeek(7)" class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs hover:bg-slate-100">W7</button>
+        <button onclick="jumpToWeek(8)" class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs hover:bg-slate-100">W8</button>
+        <button onclick="jumpToWeek(9)" class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs hover:bg-slate-100">W9</button>
+        <button onclick="jumpToWeek(10)" class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs hover:bg-slate-100">W10</button>
+        <button onclick="jumpToWeek(11)" class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs hover:bg-slate-100">W11</button>
+        <button onclick="jumpToWeek(12)" class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs hover:bg-slate-100">W12</button>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        // Week 1
+        { w: 1, q: "In the word root for conservation, servare stands for", o: ["together", "to keep", "house", "manage"], a: 1 },
+        { w: 1, q: "Phillips curve shows the relation between", o: ["profit and loss", "marked price and selling price", "inflation rate and unemployment rate", "electricity consumption and heat output"], a: 2 },
+        { w: 1, q: "\"the ability of a single economic actor (or small group of actors) to have a substantial influence on market prices\" is known as", o: ["price power", "market power", "externality", "economic power"], a: 1 },
+        { w: 1, q: "\"an increase in the overall level of prices in the economy\" is", o: ["inflation", "deflation", "stagflation", "priceflation"], a: 0 },
+        { w: 1, q: "In the word root for conservation, con stands for", o: ["together", "to keep", "house", "manage"], a: 0 },
+        { w: 1, q: "Input costs that do not require an outlay of money are", o: ["explicit costs", "implicit costs", "opportunity costs", "phantom costs"], a: 1 },
+        { w: 1, q: "In the word root for Economics, nemein stands for", o: ["together", "to keep", "house", "manage"], a: 3 },
+        { w: 1, q: "The property of distributing economic prosperity uniformly among the members of society is a definition of", o: ["efficiency", "equality", "prudence", "sustainability"], a: 1 },
+        { w: 1, q: "In the word root for Economics, oikos stands for", o: ["together", "to keep", "house", "manage"], a: 2 },
+        { w: 1, q: "\"fluctuations in economic activity, such as employment and production\" are referred to as", o: ["business cycles", "economic cycles", "production cycles", "market cycles"], a: 0 },
+
+        // Week 2
+        { w: 2, q: "Which of these is a pillar of sustainability?", o: ["social sustainability", "industrial sustainability", "agricultural sustainability", "trans-boundary sustainability"], a: 0 },
+        { w: 2, q: "Which of these is not a pillar of sustainability?", o: ["environmental sustainability", "economic sustainability", "trans-boundary sustainability", "social sustainability"], a: 2 },
+        { w: 2, q: "Which of these is a positive check according to Malthus?", o: ["late marriage", "war", "celibacy", "moral restraint"], a: 1 },
+        { w: 2, q: "The Trinity explosion of 1945 is taken as the beginning of the", o: ["Holocene", "Cenocene", "Anthropocene", "Eocene"], a: 2 },
+        { w: 2, q: "The demographic transition sees a society move from", o: ["high birth rate, low death rate to low birth rate, high death rate", "low birth rate, high death rate to low birth rate, low death rate", "high birth rate, high death rate to low birth rate, low death rate", "high birth rate, high death rate to low birth rate, high death rate"], a: 2 },
+        { w: 2, q: "The logistic growth equation curve is", o: ["I-shaped", "J-shaped", "S-shaped", "U-shaped"], a: 2 },
+        { w: 2, q: "According to Malthusian model,", o: ["Population grows in geometric progression, food supply increases in arithmetic progression", "Population grows in geometric progression, food supply increases in geometric progression", "Population grows in arithmetic progression, food supply increases in arithmetic progression", "Population grows in arithmetic progression, food supply increases in geometric progression"], a: 0 },
+        { w: 2, q: "The book \"An Essay on the Principle of Population\" was written by", o: ["Darwin", "Malthus", "Spencer", "Owens"], a: 1 },
+        { w: 2, q: "The quantum of human impacts can be written as", o: ["I = P + A + T", "I = P x A + T", "I = P x A x T", "I = P + A x T"], a: 2 },
+        { w: 2, q: "Which of these is a preventive check according to Malthus?", o: ["foresight", "vice", "misery", "flood"], a: 0 },
+
+        // Week 3
+        { w: 3, q: "\"the potential or capacity of a material to have adverse effects on living organisms\" is", o: ["vulnerability", "susceptibility", "sustainability", "toxicity"], a: 3 },
+        { w: 3, q: "________ determines which projects or developments require a full or partial impact assessment study.", o: ["screening", "scoping", "reporting", "review"], a: 0 },
+        { w: 3, q: "Macrodebris in the context of plastic debris has fragments of size", o: ["> 20 mm", "5-20 mm", "< 5 mm", "< 1 mm"], a: 0 },
+        { w: 3, q: "\"Any changes in natural or human systems that inadvertently increase vulnerability to climatic stimuli; an adaptation that does not succeed in reducing vulnerability but increases it instead\" is", o: ["adaptation", "mitigation", "maladaptation", "malmitigation"], a: 2 },
+        { w: 3, q: "\"the extent to which a chemical is available for uptake into an organism\" is", o: ["bioavailability", "bioaccumulation", "biomagnification", "bioresponse"], a: 0 },
+        { w: 3, q: "Hydrocarbons derived directly from mineral oils are", o: ["petrogenic hydrocarbons", "pyrogenic hydrocarbons", "biogenic hydrocarbons", "chemoenic hydrocarbons"], a: 0 },
+        { w: 3, q: "\"the relative effect of exposure\" is", o: ["vulnerability", "sensitivity", "sustainability", "toxicity"], a: 1 },
+        { w: 3, q: "The increasing concentration of a substance in the tissues of organisms at successively higher levels in a food chain is", o: ["bioavailability", "bioaccumulation", "biomagnification", "bioresponse"], a: 2 },
+        { w: 3, q: "Mesodebris in the context of plastic debris has fragments of size", o: ["> 20 mm", "5-20 mm", "< 5 mm", "< 1 mm"], a: 1 },
+        { w: 3, q: "________ is used to identify which potential impacts are relevant to assess.", o: ["screening", "scoping", "reporting", "review"], a: 1 },
+
+        // Week 4
+        { w: 4, q: "Which of these is not a physical factor of habitat?", o: ["soil", "moisture", "predators", "temperature"], a: 2 },
+        { w: 4, q: "Which of these correctly represents the process of habitat fragmentation and loss?", o: ["Dissection -> Perforation -> Fragmentation -> Attrition", "Dissection -> Attrition -> Fragmentation -> Perforation", "Dissection -> Perforation -> Attrition -> Fragmentation", "Dissection -> Fragmentation -> Perforation -> Attrition"], a: 0 },
+        { w: 4, q: "A root zone treatment plant is an example of", o: ["phytoremediation", "biological control", "biomagnification", "bioaccumulation"], a: 0 },
+        { w: 4, q: "\"The rate of any biological process is limited by that factor in least amount relative to requirement.\" This is", o: ["Liebig's law of the minimum", "Liebig's law of the maximum", "Shelford's law of tolerance", "Shelford's law of intolerance"], a: 0 },
+        { w: 4, q: "Movement of individuals away from their birth place into a new habitat to survive and reproduce is called", o: ["translocation", "migration", "dispersal", "drifting"], a: 2 },
+        { w: 4, q: "Which of these is a stochastic factor?", o: ["birth rate", "death rate", "population structure", "environmental fluctuation"], a: 3 },
+        { w: 4, q: "The movement of lions across the Gir landscape is an example of", o: ["diffusion", "dispersal", "jump dispersal", "secular dispersal"], a: 3 },
+        { w: 4, q: "The acronym HIPPO does not include", o: ["habitat loss", "invasive species", "pollination", "pollution"], a: 2 },
+        { w: 4, q: "Growing vegetables under a teak plantation failed. I should be concerned about", o: ["autophagy", "allelophagy", "autopathy", "allelopathy"], a: 3 },
+        { w: 4, q: "The regular, seasonal movement of animals, often along fixed routes is called", o: ["translocation", "migration", "dispersal", "drifting"], a: 1 },
+
+        // Week 5
+        { w: 5, q: "Fire protection is a", o: ["private good", "club good", "common resource", "public good"], a: 3 },
+        { w: 5, q: "\"the ability to produce a good using fewer inputs than another producer\" is", o: ["comparative advantage", "absolute advantage", "production advantage", "resource advantage"], a: 1 },
+        { w: 5, q: "Which of these is not a method of internalisation of externalities?", o: ["tradable pollution permits", "charities to social causes", "command-and-control policies", "free market"], a: 3 },
+        { w: 5, q: "Public goods are", o: ["excludable, rival", "non-excludable, rival", "excludable, non-rival", "non-excludable, non-rival"], a: 3 },
+        { w: 5, q: "Club goods are", o: ["excludable, rival", "non-excludable, rival", "excludable, non-rival", "non-excludable, non-rival"], a: 2 },
+        { w: 5, q: "\"the impact of one person's actions on the well-being of a bystander\" is", o: ["actor-observer effect", "externality", "internality", "benefits principle"], a: 1 },
+        { w: 5, q: "\"a simplified description, especially a mathematical one, of a system or process\" is a", o: ["equation", "model", "philosophy", "process dynamics"], a: 1 },
+        { w: 5, q: "\"a measure of happiness or satisfaction\" is", o: ["utility", "satiety", "gladity", "value"], a: 0 },
+        { w: 5, q: "Clothing is a", o: ["private good", "club good", "common resource", "public good"], a: 0 },
+        { w: 5, q: "Private goods are", o: ["excludable, rival", "non-excludable, rival", "excludable, non-rival", "non-excludable, non-rival"], a: 0 },
+
+        // Week 6
+        { w: 6, q: "\"the quantity supplied of a good rises when the price of the good rises\" is", o: ["law of demand", "law of supply", "law of quantity demanded", "law of quantity supplied"], a: 1 },
+        { w: 6, q: "\"a table that shows the relationship between the price of a good and the quantity supplied\" is a", o: ["demand table", "demand schedule", "supply table", "supply schedule"], a: 3 },
+        { w: 6, q: "Coffee powder and sugar are", o: ["substitutes", "complements", "club goods", "public goods"], a: 1 },
+        { w: 6, q: "\"a graph of the relationship between the price of a good and the quantity demanded\" is a", o: ["demand curve", "supply curve", "Laffer's curve", "Phillips curve"], a: 0 },
+        { w: 6, q: "Percentage change in quantity supplied divided by percentage change in price is", o: ["price elasticity of demand", "income elasticity of demand", "cross-price elasticity", "price elasticity of supply"], a: 3 },
+        { w: 6, q: "\"a good for which an increase in income leads to an increase in demand\" is a", o: ["normal good", "inferior good", "Giffen good", "common good"], a: 0 },
+        { w: 6, q: "Responsiveness of quantity demanded of one good to change in price of another is", o: ["price elasticity of demand", "income elasticity of demand", "cross-price elasticity", "price elasticity of supply"], a: 2 },
+        { w: 6, q: "\"a graph of the relationship between the price of a good and the quantity supplied\" is a", o: ["demand curve", "supply curve", "Laffer's curve", "Phillips curve"], a: 1 },
+        { w: 6, q: "\"a legal minimum on the price at which a good can be sold\" is a", o: ["price ceiling", "price floor", "selling ceiling", "selling floor"], a: 1 },
+        { w: 6, q: "\"a table that shows the relationship between the price of a good and the quantity demanded\" is a", o: ["demand table", "demand schedule", "supply table", "supply schedule"], a: 1 },
+
+        // Week 7
+        { w: 7, q: "Laffer's curve is the relationship between", o: ["inflation and unemployment", "tax size and tax revenue", "producer surplus and consumer surplus", "tax size and deadweight loss"], a: 1 },
+        { w: 7, q: "\"amount a buyer is willing to pay minus amount actually paid\" is", o: ["consumer surplus", "producer surplus", "total surplus", "deadweight loss"], a: 0 },
+        { w: 7, q: "\"the fall in total surplus that results from a market distortion\" is", o: ["consumer surplus", "producer surplus", "total surplus", "deadweight loss"], a: 3 },
+        { w: 7, q: "\"amount a seller is paid minus the seller's cost\" is", o: ["consumer surplus", "producer surplus", "total surplus", "deadweight loss"], a: 1 },
+        { w: 7, q: "\"the maximum amount that a buyer will pay for a good\" is", o: ["willingness to pay", "market demand", "demand curve", "buyer's surplus"], a: 0 },
+        { w: 7, q: "Imposition of tariff", o: ["increases producer surplus and gov revenue", "increases consumer surplus and gov revenue", "increases both surpluses", "increases total surplus"], a: 0 },
+        { w: 7, q: "The area between the supply curve and the price is", o: ["consumer surplus", "producer surplus", "total surplus", "deadweight loss"], a: 1 },
+        { w: 7, q: "Value to buyers minus Cost to sellers is", o: ["consumer surplus", "producer surplus", "total surplus", "deadweight loss"], a: 2 },
+        { w: 7, q: "\"the price of a good that prevails in the world market\" is the", o: ["export price", "import price", "world price", "domestic price"], a: 2 },
+        { w: 7, q: "The area between the demand curve and the price is", o: ["consumer surplus", "producer surplus", "total surplus", "deadweight loss"], a: 0 },
+
+        // Week 8
+        { w: 8, q: "For a positive production externality,", o: ["SMB = PMB", "SMB = PMB - MD", "SMB = PMB + MB", "SMC = PMC/MD"], a: 2 },
+        { w: 8, q: "\"the direct benefit to consumers of consuming an additional unit\" is", o: ["PMC", "SMC", "PMB", "SMB"], a: 2 },
+        { w: 8, q: "Partying with loud noise is an example of", o: ["negative production", "positive production", "negative consumption", "positive consumption"], a: 2 },
+        { w: 8, q: "When consumption reduces the well-being of others without compensation:", o: ["negative production", "positive production", "negative consumption", "positive consumption"], a: 2 },
+        { w: 8, q: "When firm's production reduces the well-being of others without compensation:", o: ["negative production", "positive production", "negative consumption", "positive consumption"], a: 0 },
+        { w: 8, q: "Vaccination is an example of", o: ["negative production", "positive production", "negative consumption", "positive consumption"], a: 3 },
+        { w: 8, q: "When firm's production increases well-being of others without compensation:", o: ["negative production", "positive production", "negative consumption", "positive consumption"], a: 1 },
+        { w: 8, q: "For a positive consumption externality,", o: ["SMB = PMB", "SMB = PMB - MD", "SMB = PMB + MB", "SMC = PMC/MD"], a: 2 },
+        { w: 8, q: "For a negative consumption externality,", o: ["SMB = PMB", "SMB = PMB - MD", "SMB = PMB + MB", "SMC = PMC/MD"], a: 1 },
+        { w: 8, q: "For a negative production externality,", o: ["SMC = PMC + MD", "SMC = PMC - MD", "SMC = PMC", "SMC = PMC - MB"], a: 0 },
+
+        // Week 9
+        { w: 9, q: "\"increase in total cost that arises from an extra unit of production\" is", o: ["fixed costs", "variable costs", "marginal costs", "sunk costs"], a: 2 },
+        { w: 9, q: "\"increase in output that arises from an additional unit of input\" is", o: ["marginal product", "marginal profit", "marginal loss", "marginal cost"], a: 0 },
+        { w: 9, q: "A monopolist firm's profit is given by", o: ["(Price-ATC) x Q", "(Price Q) x ATC", "(ATC-Q) x Price", "Price x Q-ATC"], a: 0 },
+        { w: 9, q: "Which of the following is true for a competitive firm?", o: ["P > MR", "P > MC", "MR > MC", "MR = MC"], a: 3 },
+        { w: 9, q: "Relationship between quantity of inputs and quantity of output is", o: ["Laffer's", "Phillips", "Production function", "Output function"], a: 2 },
+        { w: 9, q: "\"total revenue minus total cost, including both explicit and implicit\" is", o: ["economic profit", "accounting profit", "profit", "loss"], a: 0 },
+        { w: 9, q: "Cost of production for a single firm is much lesser than for multiple competitive firms:", o: ["natural monopoly", "artificial monopoly", "oligopoly", "duopoly"], a: 0 },
+        { w: 9, q: "Which of the following is true for a monopoly?", o: ["P > MR", "MR > MC", "MC > P", "MC > MR"], a: 0 },
+        { w: 9, q: "\"costs that do not vary with the quantity of output produced\" are", o: ["fixed costs", "variable costs", "marginal costs", "sunk costs"], a: 0 },
+        { w: 9, q: "\"total revenue minus total explicit cost\" is a definition of", o: ["economic profit", "accounting profit", "profit", "loss"], a: 1 },
+
+        // Week 10
+        { w: 10, q: "Gov should choose policies deemed just by an impartial observer behind a 'veil of ignorance':", o: ["Utilitarianism", "Liberalism", "Libertarianism", "Socialism"], a: 1 },
+        { w: 10, q: "\"severe deprivation of basic human needs\" is", o: ["absolute poverty", "relative poverty", "median poverty", "poverty line"], a: 0 },
+        { w: 10, q: "\"absolute level of income set by gov below which family is in poverty\" is", o: ["deprivation line", "poverty line", "deprivation index", "poverty index"], a: 1 },
+        { w: 10, q: "\"above-equilibrium wages paid by firms to increase worker productivity\" are", o: ["compensating wage", "efficiency wage", "productivity wage", "retention wage"], a: 1 },
+        { w: 10, q: "\"difference in wages to offset non-monetary characteristics of different jobs\" is", o: ["differentiating differential", "compensating differential", "differentiating integral", "compensating integral"], a: 1 },
+        { w: 10, q: "Absolute poverty depends", o: ["on income only", "on access only", "on both income and access", "on neither"], a: 2 },
+        { w: 10, q: "\"household's income lower than the median income in the country\" is", o: ["absolute poverty", "relative poverty", "median poverty", "poverty line"], a: 1 },
+        { w: 10, q: "\"the equipment and structures used to produce goods and services\" is", o: ["tools", "machinery", "capital", "factors of production"], a: 2 },
+        { w: 10, q: "For a competitive and profit-maximising firm,", o: ["price < VM product", "price = VM product", "price > VM product", "price = V average product"], a: 1 },
+        { w: 10, q: "Gov should punish crimes/enforce agreements but not redistribute income:", o: ["Utilitarianism", "Liberalism", "Libertarianism", "Socialism"], a: 2 },
+
+        // Week 11
+        { w: 11, q: "\"situation where a buyer is at a risk of being sold goods of low quality\" is", o: ["adverse selection", "moral hazard", "symmetric info", "none"], a: 0 },
+        { w: 11, q: "Consumption change resulting from price change moving consumer to a higher/lower indifference curve:", o: ["income effect", "substitution effect", "indifference effect", "budget effect"], a: 0 },
+        { w: 11, q: "Which of these is not a property of indifference curves?", o: ["Higher are preferred", "Downward-sloping", "Cross at right angles", "Bowed inwards"], a: 2 },
+        { w: 11, q: "Informed party revealing private info to an uninformed party is", o: ["signalling", "screening", "informing", "heuristics"], a: 0 },
+        { w: 11, q: "\"part of actual resources that can be developed profitably in the future\" are", o: ["potential", "actual", "reserve", "stock"], a: 2 },
+        { w: 11, q: "\"curve that shows consumption bundles that give same satisfaction\" is", o: ["consumption", "satisfaction", "indifference", "budget"], a: 2 },
+        { w: 11, q: "\"rate at which a consumer is willing to trade one good for another\" is", o: ["marginal rate of substitution", "marginal rate of exchange", "marginal rate of trade", "marginal rate of transfer"], a: 0 },
+        { w: 11, q: "\"Ram is messy, so Ram must also be lazy\" is an example of", o: ["confirmation bias", "halo effect", "horn effect", "priming"], a: 2 },
+        { w: 11, q: "Justifying increased investment because prior investment was made:", o: ["affect heuristic", "availability heuristic", "effort heuristic", "escalation of commitment"], a: 3 },
+        { w: 11, q: "\"resources that may be used in the future\" are", o: ["potential", "actual", "reserve", "stock"], a: 0 },
+
+        // Week 12
+        { w: 12, q: "Captive breeding is an example of", o: ["in-situ conservation", "ex-situ conservation", "in-situ preservation", "ex-situ preservation"], a: 1 },
+        { w: 12, q: "Biological control of pest populations is a", o: ["provisioning", "regulating", "supporting", "cultural"], a: 1 },
+        { w: 12, q: "Zoo is an example of", o: ["in-situ conservation", "ex-situ conservation", "in-situ preservation", "ex-situ preservation"], a: 1 },
+        { w: 12, q: "Elephant has large range, regulates ecosystem, and people relate to it. It is", o: ["umbrella", "keystone", "flagship", "all of the above"], a: 3 },
+        { w: 12, q: "As per WPA 1972, wild life includes animal/vegetation which forms part of any", o: ["ecosystem", "state", "country", "habitat"], a: 3 },
+        { w: 12, q: "Tiger regulates through trophic cascades and attracts tourists. It is", o: ["umbrella", "keystone", "flagship", "all of the above"], a: 3 },
+        { w: 12, q: "\"the cost of impacts caused by emission of CO2\" is", o: ["cost of carbon", "economic cost", "social cost", "cultural cost"], a: 2 },
+        { w: 12, q: "Soil formation is an example of", o: ["provisioning", "regulating", "supporting", "cultural"], a: 2 },
+        { w: 12, q: "Orchids in Sessa Orchid Sanctuary attract witnesses. They are", o: ["umbrella", "keystone", "flagship", "extinct"], a: 2 },
+        { w: 12, q: "Nutrient cycling is an example of", o: ["provisioning", "regulating", "supporting", "cultural"], a: 2 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let userAnswers = new Array(quizData.length).fill(null);
+    let isAnswered = false;
+
+    // Elements
+    const quizContainer = document.getElementById('quiz-container');
+    const resultsContainer = document.getElementById('results-container');
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const progressIndicator = document.getElementById('progress-bar');
+    const questionCount = document.getElementById('question-count');
+    const weekTag = document.getElementById('week-tag');
+    const nextBtn = document.getElementById('next-btn');
+    const prevBtn = document.getElementById('prev-btn');
+    const feedback = document.getElementById('feedback');
+    const finalScore = document.getElementById('final-score');
+    const finalPercent = document.getElementById('final-percent');
+
+    function initQuiz() {
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const data = quizData[currentQuestionIndex];
+        
+        // Update UI
+        weekTag.textContent = `Week ${data.w}`;
+        questionCount.textContent = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+        questionText.textContent = data.q;
+        progressIndicator.style.width = `${((currentQuestionIndex + 1) / quizData.length) * 100}%`;
+        
+        // Reset state for new question or previous question
+        optionsContainer.innerHTML = '';
+        isAnswered = userAnswers[currentQuestionIndex] !== null;
+        feedback.classList.add('hidden');
+        
+        // Update Nav buttons
+        prevBtn.disabled = currentQuestionIndex === 0;
+        nextBtn.textContent = currentQuestionIndex === quizData.length - 1 ? "Finish Quiz" : "Next Question";
+
+        // Generate Options
+        data.o.forEach((option, index) => {
+            const btn = document.createElement('button');
+            btn.className = `w-full text-left p-4 rounded-xl border border-slate-200 font-medium option-transition hover:border-blue-300 hover:bg-blue-50 focus:outline-none flex justify-between items-center`;
+            btn.innerHTML = `<span>${option}</span>`;
+            
+            // Re-apply states if previously answered
+            if (isAnswered) {
+                applyOptionStyles(btn, index, data.a, userAnswers[currentQuestionIndex]);
+                btn.disabled = true;
+            } else {
+                btn.onclick = () => selectOption(index);
+            }
+            
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function selectOption(index) {
+        if (isAnswered) return;
+        
+        const data = quizData[currentQuestionIndex];
+        userAnswers[currentQuestionIndex] = index;
+        isAnswered = true;
+
+        if (index === data.a) score++;
+
+        // Style all options
+        const btns = optionsContainer.querySelectorAll('button');
+        btns.forEach((btn, i) => {
+            applyOptionStyles(btn, i, data.a, index);
+            btn.disabled = true;
+        });
+
+        // Show feedback
+        feedback.classList.remove('hidden');
+        if (index === data.a) {
+            feedback.textContent = "Correct!";
+            feedback.className = "text-green-600 font-bold";
+        } else {
+            feedback.textContent = `Incorrect. The correct answer was: ${data.o[data.a]}`;
+            feedback.className = "text-red-500 font-bold";
+        }
+    }
+
+    function applyOptionStyles(btn, i, correctIndex, userIndex) {
+        if (i === correctIndex) {
+            btn.classList.add('bg-green-50', 'border-green-500', 'text-green-700');
+            btn.innerHTML += `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>`;
+        } else if (i === userIndex) {
+            btn.classList.add('bg-red-50', 'border-red-400', 'text-red-700');
+            btn.innerHTML += `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>`;
+        } else {
+            btn.classList.add('opacity-50');
+        }
+    }
+
+    nextBtn.onclick = () => {
+        if (currentQuestionIndex < quizData.length - 1) {
+            currentQuestionIndex++;
+            showQuestion();
+        } else {
+            showResults();
+        }
+    };
+
+    prevBtn.onclick = () => {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            showQuestion();
+        }
+    };
+
+    function jumpToWeek(weekNum) {
+        const index = quizData.findIndex(q => q.w === weekNum);
+        if (index !== -1) {
+            currentQuestionIndex = index;
+            showQuestion();
+            resultsContainer.classList.add('hidden');
+            quizContainer.classList.remove('hidden');
+        }
+    }
+
+    function showResults() {
+        quizContainer.classList.add('hidden');
+        resultsContainer.classList.remove('hidden');
+        
+        finalScore.textContent = `${score}/${quizData.length}`;
+        const percent = Math.round((score / quizData.length) * 100);
+        finalPercent.textContent = `${percent}%`;
+    }
+
+    initQuiz();
+</script>
+
+</body>
+</html>
